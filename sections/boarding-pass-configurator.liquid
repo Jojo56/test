@@ -49,15 +49,15 @@
         {%- comment -%} Canvas overlay position config (percentages of image) {%- endcomment -%}
         <div
           data-bp-preview-config
-          data-from-x="{{ section.settings.from_x }}"
-          data-from-y="{{ section.settings.from_y }}"
-          data-to-x="{{ section.settings.to_x }}"
-          data-to-y="{{ section.settings.to_y }}"
-          data-date-x="{{ section.settings.date_x }}"
-          data-date-y="{{ section.settings.date_y }}"
-          data-code-size="{{ section.settings.code_font_size }}"
-          data-city-size="{{ section.settings.city_font_size }}"
-          data-date-size="{{ section.settings.date_font_size }}"
+          data-from-x="{{ section.settings.from_x | divided_by: 100.0 }}"
+          data-from-y="{{ section.settings.from_y | divided_by: 100.0 }}"
+          data-to-x="{{ section.settings.to_x | divided_by: 100.0 }}"
+          data-to-y="{{ section.settings.to_y | divided_by: 100.0 }}"
+          data-date-x="{{ section.settings.date_x | divided_by: 100.0 }}"
+          data-date-y="{{ section.settings.date_y | divided_by: 100.0 }}"
+          data-code-size="{{ section.settings.code_font_size | divided_by: 100.0 }}"
+          data-city-size="{{ section.settings.city_font_size | divided_by: 100.0 }}"
+          data-date-size="{{ section.settings.date_font_size | divided_by: 100.0 }}"
           data-text-color="{{ section.settings.preview_text_color }}"
           style="display:none;"
         ></div>
@@ -253,81 +253,87 @@
       "id": "from_x",
       "label": "FROM text X position (%)",
       "min": 0,
-      "max": 1,
-      "step": 0.01,
-      "default": 0.25
+      "max": 100,
+      "step": 1,
+      "default": 25,
+      "unit": "%"
     },
     {
       "type": "range",
       "id": "from_y",
       "label": "FROM text Y position (%)",
       "min": 0,
-      "max": 1,
-      "step": 0.01,
-      "default": 0.52
+      "max": 100,
+      "step": 1,
+      "default": 52,
+      "unit": "%"
     },
     {
       "type": "range",
       "id": "to_x",
       "label": "TO text X position (%)",
       "min": 0,
-      "max": 1,
-      "step": 0.01,
-      "default": 0.75
+      "max": 100,
+      "step": 1,
+      "default": 75,
+      "unit": "%"
     },
     {
       "type": "range",
       "id": "to_y",
       "label": "TO text Y position (%)",
       "min": 0,
-      "max": 1,
-      "step": 0.01,
-      "default": 0.52
+      "max": 100,
+      "step": 1,
+      "default": 52,
+      "unit": "%"
     },
     {
       "type": "range",
       "id": "date_x",
       "label": "Date X position (%)",
       "min": 0,
-      "max": 1,
-      "step": 0.01,
-      "default": 0.5
+      "max": 100,
+      "step": 1,
+      "default": 50,
+      "unit": "%"
     },
     {
       "type": "range",
       "id": "date_y",
       "label": "Date Y position (%)",
       "min": 0,
-      "max": 1,
-      "step": 0.01,
-      "default": 0.62
+      "max": 100,
+      "step": 1,
+      "default": 62,
+      "unit": "%"
     },
     {
       "type": "range",
       "id": "code_font_size",
       "label": "Airport code font size",
-      "min": 0.02,
-      "max": 0.12,
-      "step": 0.005,
-      "default": 0.06
+      "min": 2,
+      "max": 12,
+      "step": 0.5,
+      "default": 6
     },
     {
       "type": "range",
       "id": "city_font_size",
       "label": "City name font size",
-      "min": 0.01,
-      "max": 0.06,
-      "step": 0.005,
-      "default": 0.025
+      "min": 1,
+      "max": 6,
+      "step": 0.5,
+      "default": 2.5
     },
     {
       "type": "range",
       "id": "date_font_size",
       "label": "Date font size",
-      "min": 0.01,
-      "max": 0.06,
-      "step": 0.005,
-      "default": 0.03
+      "min": 1,
+      "max": 6,
+      "step": 0.5,
+      "default": 3
     }
   ],
   "presets": [
