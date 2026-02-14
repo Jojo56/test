@@ -1,0 +1,339 @@
+{% comment %}
+  Boarding Pass Configurator Section
+  ===================================
+  Shopify theme section for a customizable boarding pass t-shirt.
+  Users pick FROM/TO airports + date, and the product image preview updates.
+
+  Usage: Add this section to your product template in Shopify Theme Editor.
+{% endcomment %}
+
+{{ 'boarding-pass-configurator.css' | asset_url | stylesheet_tag }}
+
+{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign header_bg = section.settings.header_bg_color %}
+{% assign header_text = section.settings.header_text_color %}
+{% assign btn_bg = section.settings.button_bg_color %}
+{% assign btn_text = section.settings.button_text_color %}
+
+<div
+  class="bp-configurator"
+  data-bp-configurator
+  data-bp-airports-url="{{ 'airports.json' | asset_url }}"
+>
+  {%- comment -%} Hidden variant ID {%- endcomment -%}
+  <input type="hidden" data-bp-variant-id value="{{ current_variant.id }}">
+
+  {%- comment -%} Hidden form fields for line item properties {%- endcomment -%}
+  <input type="hidden" name="properties[From]" data-bp-form-from value="">
+  <input type="hidden" name="properties[To]" data-bp-form-to value="">
+  <input type="hidden" name="properties[Departure Date]" data-bp-form-date value="">
+  <input type="hidden" name="properties[Ticket Code]" data-bp-form-ticket value="">
+
+  {%- comment -%} ======== PRODUCT IMAGE PREVIEW ======== {%- endcomment -%}
+  {% if section.settings.show_preview and current_variant.featured_image %}
+    <div class="bp-preview-section">
+      <div class="bp-preview-container">
+        <img
+          class="bp-preview-image"
+          data-bp-product-image
+          src="{{ current_variant.featured_image | image_url: width: 800 }}"
+          alt="{{ product.title | escape }}"
+          loading="lazy"
+          width="800"
+          height="800"
+        >
+        <canvas
+          class="bp-preview-canvas"
+          data-bp-canvas
+        ></canvas>
+        {%- comment -%} Canvas overlay position config (percentages of image) {%- endcomment -%}
+        <div
+          data-bp-preview-config
+          data-from-x="{{ section.settings.from_x }}"
+          data-from-y="{{ section.settings.from_y }}"
+          data-to-x="{{ section.settings.to_x }}"
+          data-to-y="{{ section.settings.to_y }}"
+          data-date-x="{{ section.settings.date_x }}"
+          data-date-y="{{ section.settings.date_y }}"
+          data-code-size="{{ section.settings.code_font_size }}"
+          data-city-size="{{ section.settings.city_font_size }}"
+          data-date-size="{{ section.settings.date_font_size }}"
+          data-text-color="{{ section.settings.preview_text_color }}"
+          style="display:none;"
+        ></div>
+      </div>
+    </div>
+  {% endif %}
+
+  {%- comment -%} ======== BOARDING PASS CARD ======== {%- endcomment -%}
+  <div class="bp-card" style="margin-top: 16px;">
+
+    {%- comment -%} -- Header -- {%- endcomment -%}
+    <div class="bp-header" style="background-color: {{ header_bg }}; color: {{ header_text }};">
+      <div class="bp-header-left">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+        <span class="bp-header-title">BOARDING PASS</span>
+      </div>
+      <span class="bp-header-code" data-bp-ticket-code>#------</span>
+    </div>
+
+    {%- comment -%} -- Body -- {%- endcomment -%}
+    <div class="bp-body">
+
+      {%- comment -%} Airport selection row {%- endcomment -%}
+      <div class="bp-airport-row">
+
+        {%- comment -%} FROM {%- endcomment -%}
+        <div class="bp-airport-field">
+          <button type="button" class="bp-airport-btn" data-bp-from-btn>
+            <span class="bp-step-label">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22h20"/><path d="M6.36 17.4 4 17l-2-4 1.1-.55a2 2 0 0 1 1.8 0l.17.1a2 2 0 0 0 1.8 0L8 12 5 6l.9-.45a2 2 0 0 1 2.09.2l4.02 3a2 2 0 0 0 2.1.2l4.19-2.06a2.41 2.41 0 0 1 1.73-.17L21 7a1.4 1.4 0 0 1 .87 1.99l-.38.76c-.23.46-.6.84-1.07 1.08L7.58 17.2a2 2 0 0 1-1.22.18Z"/></svg>
+              STEP 1: FROM
+            </span>
+            <span class="bp-airport-placeholder" data-bp-from-code>???</span>
+            <span class="bp-airport-city" data-bp-from-city style="display:none;"></span>
+          </button>
+          <button type="button" class="bp-clear-btn" data-bp-from-clear style="display:none;" aria-label="Clear departure">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+
+        {%- comment -%} Center: plane icon + swap {%- endcomment -%}
+        <div class="bp-center-controls">
+          <div class="bp-plane-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+          </div>
+          <button type="button" class="bp-swap-btn" data-bp-swap aria-label="Swap airports">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+          </button>
+        </div>
+
+        {%- comment -%} TO {%- endcomment -%}
+        <div class="bp-airport-field">
+          <button type="button" class="bp-airport-btn" data-bp-to-btn>
+            <span class="bp-step-label">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22h20"/><path d="M3.77 10.77 2 9l2-4.5 1.1.55c.55.28.9.84.9 1.45s.35 1.17.9 1.45L8 8.5l3-6 1.05.53a2 2 0 0 1 1.09 1.52l.72 5.4a2 2 0 0 0 1.09 1.52l4.4 2.2c.42.22.78.55 1.01.96l.6 1.03c.49.88-.06 1.98-1.06 2.1l-1.18.15c-.47.06-.95-.02-1.37-.24L4.29 11.15a2 2 0 0 1-.52-.38Z"/></svg>
+              STEP 2: TO
+            </span>
+            <span class="bp-airport-placeholder" data-bp-to-code>???</span>
+            <span class="bp-airport-city" data-bp-to-city style="display:none;"></span>
+          </button>
+          <button type="button" class="bp-clear-btn" data-bp-to-clear style="display:none;" aria-label="Clear destination">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      {%- comment -%} Date section {%- endcomment -%}
+      <div class="bp-date-section">
+        <div class="bp-date-input-wrapper">
+          <button type="button" class="bp-date-btn" data-bp-date-btn>
+            <span class="bp-step-label">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+              STEP 3: DEPARTURE DATE
+            </span>
+            <span class="bp-date-value" data-bp-date-value>SELECT DATE</span>
+          </button>
+          <input
+            type="date"
+            class="bp-date-input"
+            data-bp-date-input
+            aria-label="Select departure date"
+          >
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  {%- comment -%} ======== VALIDATION ======== {%- endcomment -%}
+  <div class="bp-validation-msg" data-bp-validation></div>
+
+  {%- comment -%} ======== ADD TO CART ======== {%- endcomment -%}
+  <div class="bp-add-to-cart">
+    <button
+      type="button"
+      class="bp-add-to-cart-btn"
+      data-bp-add-to-cart
+      disabled
+      style="background-color: {{ btn_bg }}; color: {{ btn_text }};"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+      {{ section.settings.add_to_cart_text }}
+    </button>
+  </div>
+
+  {%- comment -%} ======== AIRPORT SEARCH MODAL ======== {%- endcomment -%}
+  <div class="bp-modal-overlay" data-bp-modal>
+    <div class="bp-modal">
+      <div class="bp-modal-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input
+          type="text"
+          class="bp-search-input"
+          data-bp-search
+          placeholder="Search airport or city..."
+          autocomplete="off"
+          spellcheck="false"
+        >
+        <button type="button" class="bp-modal-close" data-bp-modal-close aria-label="Close search">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="bp-airport-list" data-bp-airport-list></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="{{ 'boarding-pass-configurator.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Boarding Pass Configurator",
+  "tag": "section",
+  "class": "bp-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_text",
+      "label": "Add to Cart Button Text",
+      "default": "ADD TO CART"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "header_bg_color",
+      "label": "Header Background",
+      "default": "#D7D2CB"
+    },
+    {
+      "type": "color",
+      "id": "header_text_color",
+      "label": "Header Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Add to Cart Background",
+      "default": "#111827"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Add to Cart Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Image Preview"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_preview",
+      "label": "Show product image preview",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "preview_text_color",
+      "label": "Preview text color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "from_x",
+      "label": "FROM text X position (%)",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.25
+    },
+    {
+      "type": "range",
+      "id": "from_y",
+      "label": "FROM text Y position (%)",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.52
+    },
+    {
+      "type": "range",
+      "id": "to_x",
+      "label": "TO text X position (%)",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.75
+    },
+    {
+      "type": "range",
+      "id": "to_y",
+      "label": "TO text Y position (%)",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.52
+    },
+    {
+      "type": "range",
+      "id": "date_x",
+      "label": "Date X position (%)",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.5
+    },
+    {
+      "type": "range",
+      "id": "date_y",
+      "label": "Date Y position (%)",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.62
+    },
+    {
+      "type": "range",
+      "id": "code_font_size",
+      "label": "Airport code font size",
+      "min": 0.02,
+      "max": 0.12,
+      "step": 0.005,
+      "default": 0.06
+    },
+    {
+      "type": "range",
+      "id": "city_font_size",
+      "label": "City name font size",
+      "min": 0.01,
+      "max": 0.06,
+      "step": 0.005,
+      "default": 0.025
+    },
+    {
+      "type": "range",
+      "id": "date_font_size",
+      "label": "Date font size",
+      "min": 0.01,
+      "max": 0.06,
+      "step": 0.005,
+      "default": 0.03
+    }
+  ],
+  "presets": [
+    {
+      "name": "Boarding Pass Configurator"
+    }
+  ]
+}
+{% endschema %}

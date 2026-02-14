@@ -1,0 +1,598 @@
+/* ============================================
+   BOARDING PASS CONFIGURATOR - Shopify Theme
+   ============================================ */
+
+@font-face {
+  font-family: 'Supply';
+  src: url('Supply-Regular.woff2') format('woff2'),
+       url('Supply-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Supply';
+  src: url('Supply-Bold.woff2') format('woff2'),
+       url('Supply-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bp-font: 'Supply', 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+  --bp-radius: 0.75rem;
+  --bp-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+  --bp-border: #e5e7eb;
+  --bp-muted: #6b7280;
+  --bp-bg: #ffffff;
+  --bp-text: #111827;
+}
+
+/* ---- Main Container ---- */
+.bp-configurator {
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ---- Card ---- */
+.bp-card {
+  background: var(--bp-bg);
+  border: 1px solid var(--bp-border);
+  border-radius: var(--bp-radius);
+  box-shadow: var(--bp-shadow);
+  overflow: hidden;
+  animation: bp-fade-in 0.7s ease-out;
+}
+
+@keyframes bp-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---- Header ---- */
+.bp-header {
+  position: relative;
+  padding: 8px 12px;
+  border-radius: var(--bp-radius) var(--bp-radius) 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bp-header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bp-header-left svg {
+  width: 16px;
+  height: 16px;
+}
+
+.bp-header-title {
+  font-family: var(--bp-font);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.bp-header-code {
+  font-family: var(--bp-font);
+  font-size: 10px;
+  opacity: 0.8;
+  letter-spacing: 0.05em;
+}
+
+/* ---- Body ---- */
+.bp-body {
+  padding: 12px;
+}
+
+/* ---- Airport Row ---- */
+.bp-airport-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.bp-airport-field {
+  flex: 1;
+  position: relative;
+  min-width: 0;
+}
+
+/* ---- Airport Button (Trigger) ---- */
+.bp-airport-btn {
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+}
+
+.bp-airport-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.bp-airport-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+.bp-step-label {
+  font-family: var(--bp-font);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--bp-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bp-step-label svg {
+  width: 12px;
+  height: 12px;
+}
+
+.bp-airport-code {
+  font-family: var(--bp-font);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--bp-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bp-airport-city {
+  font-family: var(--bp-font);
+  font-size: 12px;
+  color: var(--bp-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bp-airport-placeholder {
+  font-family: var(--bp-font);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #d1d5db;
+}
+
+/* ---- Clear Button ---- */
+.bp-clear-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  padding: 0;
+  opacity: 0;
+}
+
+.bp-airport-field:hover .bp-clear-btn,
+.bp-clear-btn:focus-visible {
+  opacity: 1;
+}
+
+.bp-clear-btn:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.bp-clear-btn svg {
+  width: 12px;
+  height: 12px;
+  color: var(--bp-text);
+}
+
+/* ---- Swap / Center Controls ---- */
+.bp-center-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.bp-plane-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bp-plane-icon svg {
+  width: 16px;
+  height: 16px;
+  color: var(--bp-text);
+  transform: rotate(45deg);
+}
+
+.bp-swap-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  padding: 0;
+}
+
+.bp-swap-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+  transform: rotate(180deg);
+}
+
+.bp-swap-btn svg {
+  width: 12px;
+  height: 12px;
+  color: var(--bp-text);
+}
+
+/* ---- Date Section ---- */
+.bp-date-section {
+  padding-top: 8px;
+  margin-top: 8px;
+  border-top: 1px solid var(--bp-border);
+}
+
+.bp-date-btn {
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bp-date-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.bp-date-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+.bp-date-value {
+  font-family: var(--bp-font);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--bp-text);
+}
+
+.bp-date-input-wrapper {
+  position: relative;
+}
+
+.bp-date-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  font-size: 16px; /* prevent iOS zoom */
+}
+
+/* ---- Airport Search Modal ---- */
+.bp-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+
+.bp-modal-overlay.bp-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (min-width: 640px) {
+  .bp-modal-overlay {
+    align-items: center;
+  }
+}
+
+.bp-modal {
+  background: var(--bp-bg);
+  width: 100%;
+  max-width: 480px;
+  max-height: 70vh;
+  border-radius: var(--bp-radius) var(--bp-radius) 0 0;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.3s ease-out;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .bp-modal {
+    border-radius: var(--bp-radius);
+    max-height: 60vh;
+    transform: translateY(20px);
+  }
+}
+
+.bp-modal-overlay.bp-active .bp-modal {
+  transform: translateY(0);
+}
+
+.bp-modal-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--bp-border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bp-modal-header svg {
+  width: 16px;
+  height: 16px;
+  color: var(--bp-muted);
+  flex-shrink: 0;
+}
+
+.bp-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--bp-font);
+  font-size: 16px;
+  color: var(--bp-text);
+  outline: none;
+}
+
+.bp-search-input::placeholder {
+  color: #d1d5db;
+}
+
+.bp-modal-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.bp-modal-close:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.bp-modal-close svg {
+  width: 16px;
+  height: 16px;
+  color: var(--bp-muted);
+}
+
+.bp-airport-list {
+  overflow-y: auto;
+  flex: 1;
+  padding: 8px 0;
+}
+
+.bp-airport-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+}
+
+.bp-airport-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.bp-airport-item-code {
+  font-family: var(--bp-font);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--bp-text);
+  width: 48px;
+  flex-shrink: 0;
+}
+
+.bp-airport-item-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.bp-airport-item-city {
+  font-family: var(--bp-font);
+  font-size: 14px;
+  color: var(--bp-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bp-airport-item-country {
+  font-family: var(--bp-font);
+  font-size: 12px;
+  color: var(--bp-muted);
+}
+
+.bp-no-results {
+  padding: 24px 16px;
+  text-align: center;
+  font-family: var(--bp-font);
+  font-size: 14px;
+  color: var(--bp-muted);
+}
+
+/* ---- Product Image Preview ---- */
+.bp-preview-section {
+  margin-top: 20px;
+}
+
+.bp-preview-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--bp-radius);
+  background: #f5f5f0;
+}
+
+.bp-preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Canvas overlay for text on product image */
+.bp-preview-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ---- Boarding Pass Mini Preview (on the product) ---- */
+.bp-mini-pass {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* ---- Add to Cart Section ---- */
+.bp-add-to-cart {
+  margin-top: 16px;
+}
+
+.bp-add-to-cart-btn {
+  width: 100%;
+  padding: 14px 24px;
+  font-family: var(--bp-font);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.bp-add-to-cart-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.bp-add-to-cart-btn:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.bp-add-to-cart-btn:not(:disabled):active {
+  transform: translateY(0);
+}
+
+.bp-add-to-cart-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---- Error / Validation ---- */
+.bp-validation-msg {
+  font-family: var(--bp-font);
+  font-size: 12px;
+  color: #ef4444;
+  margin-top: 8px;
+  text-align: center;
+  display: none;
+}
+
+.bp-validation-msg.bp-visible {
+  display: block;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+  .bp-airport-code {
+    font-size: 24px;
+  }
+
+  .bp-airport-placeholder {
+    font-size: 24px;
+  }
+}
+
+/* ---- Loading Spinner ---- */
+.bp-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: bp-spin 0.6s linear infinite;
+}
+
+@keyframes bp-spin {
+  to { transform: rotate(360deg); }
+}
