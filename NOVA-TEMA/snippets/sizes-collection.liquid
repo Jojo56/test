@@ -1,0 +1,45 @@
+{% comment %}
+  Size display for collection grid
+  Usage: {% render 'sizes-collection', product: product %}
+{% endcomment %}
+
+{% assign variantCount = product.variants | size %}
+{% if product.available and variantCount > 0 %}
+  <div class="product-grid-options-size">
+    {% for option in product.options %}
+      {% assign downcased_option = option | downcase %}
+      
+      <!-- Check for size-related terms -->
+      {% if downcased_option contains 'size' 
+        or downcased_option contains 'taglia' 
+        or downcased_option contains 'größe' 
+        or downcased_option contains 'talla' 
+        or downcased_option contains 'taille' %}
+        
+        {% assign option_index = forloop.index0 %}
+        {% assign shown_values = '' %}
+        {% assign size_count = 0 %}
+        
+        {% for variant in product.variants %}
+          {% if variant.available %}
+            {% assign value = variant.options[option_index] %}
+            
+            {% unless shown_values contains value %}
+              {% if size_count < 7 %}
+                <a href="{{ product.url }}" class="size-tag-link">
+                  <div class="size-tag {% unless variant.available %}soldout{% endunless %}">
+                    <span>{{ value }}</span>
+                  </div>
+                </a>
+                
+                {% assign shown_values = shown_values | append: value | append: ',' %}
+                {% assign size_count = size_count | plus: 1 %}
+              {% endif %}
+            {% endunless %}
+          {% endif %}
+        {% endfor %}
+        
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endif %}

@@ -1,0 +1,58 @@
+{% if section.id == 'template--26966931702099__main' %}
+{% assign variantCount = product.variants | size %}
+{% if product.available and variantCount > 0 %}
+<div class="product-grid-options-color-unique">
+  {% for option in product.options %}
+    {% assign downcased_option = option | downcase %}
+    
+    <!-- Check for color-related terms -->
+    {% if downcased_option contains 'color' or downcased_option contains 'colore' or downcased_option contains 'couleur' or downcased_option contains 'farbe' %}
+      {% assign option_index = forloop.index0 %}
+      {% assign option_count = 0 %}
+      {% assign values = '' %}
+      {% assign availability = '' %}
+      {% assign variant_ids = '' %}
+
+      {% for variant in product.variants %}
+        {% assign value = variant.options[option_index] %}
+        {% unless values contains value %}
+          {% if option_count > 0 %}
+            {% assign values = values | join: '|' | append: '|' %}
+            {% assign availability = availability | join: '|' | append: '|' %}
+            {% assign variant_ids = variant_ids | join: '|' | append: '|' %}
+          {% endif %}
+          {% assign values = values | append: value %}
+          {% assign availability = availability | append: variant.available %}
+          {% assign variant_ids = variant_ids | append: variant.id %}
+          {% assign option_count = option_count | plus: 1 %}
+        {% endunless %}
+      {% endfor %}
+
+      {% assign values = values | split: '|' | sort %}
+      {% assign availability = availability | split: '|' %}
+      {% assign variant_ids = variant_ids | split: '|' %}
+
+      {% for value in values %}
+        {% if option_count <= 7 %}
+          {% assign index = forloop.index0 %}
+          {% assign is_available = availability[index] %}
+          {% assign variant_id = variant_ids[index] %}
+          <div class="altli-color {% unless is_available == 'true' %}soldout{% endunless %}">
+            <div title="{{ value }}" href="{{ product.url }}?variant={{ variant_id }}">{{ value }}</div>
+          </div>
+          {% unless forloop.last or forloop.index == 7 %}
+            <span class="color-separator">/</span>
+          {% endunless %}
+        {% endif %}
+      {% endfor %}
+
+      {% if values.size >= 7 %}
+        <div class="altli-color">
+          <a title="More" href="{{ product.url }}">...</a>
+        </div>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+{% endif %}
