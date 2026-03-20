@@ -1,0 +1,39 @@
+{% if product.metafields.custom.pack_size %}
+  {% assign pack_size = product.metafields.custom.pack_size.value %}
+  {% if pack_size > 0 %}
+    
+    {% comment %} Najdi najdražjo varianto {% endcomment %}
+    {% assign max_price = 0 %}
+    {% for variant in product.variants %}
+      {% if variant.price > max_price %}
+        {% assign max_price = variant.price %}
+      {% endif %}
+    {% endfor %}
+    
+    {% comment %} Izračunaj ceno na par z najdražjo ceno {% endcomment %}
+    {% assign per_pair_price = max_price | divided_by: pack_size %}
+    
+    {% comment %} Prevodi glede na jezik {% endcomment %}
+    {% assign current_locale = localization.language.iso_code %}
+    
+    <div class="price-per-pair money bacurr-money">
+      <div>
+        {{ per_pair_price | money }}
+        
+        {% case current_locale %}
+          {% when 'it' %}
+            per paio nella confezione da {{ pack_size }} calzini.
+          {% when 'fr' %}
+            la paire dans le paquet de {{ pack_size }} chaussettes.
+          {% when 'es' %}
+            por par en el paquete de {{ pack_size }} calcetines.
+          {% when 'de' %}
+            pro Paar im Pack mit {{ pack_size }} Socken.
+          {% else %}
+            per pair for a pack of {{ pack_size }} socks.
+        {% endcase %}
+      </div>
+    </div>
+    
+  {% endif %}
+{% endif %}
