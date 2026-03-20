@@ -44,7 +44,12 @@
                 {%- for line_item in cart.items -%}
                   {% liquid
                     assign max_quantity = nil
-                  
+
+                    if line_item.variant.inventory_management != blank and line_item.variant.inventory_policy == 'deny'
+                      assign current_quantity_for_variant = cart | item_count_for_variant: line_item.variant.id
+                      assign max_quantity = line_item.variant.inventory_quantity | minus: current_quantity_for_variant | plus: line_item.quantity
+                    endif
+
                     if line_item.variant.quantity_rule.max != nil
                       assign max_quantity = max_quantity | default: 999999 | at_most: line_item.variant.quantity_rule.max
                     endif
