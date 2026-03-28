@@ -40,21 +40,29 @@ the underlying logic of the menu.
       top: calc(var(--sticky-announcement-bar-enabled, 0) * var(--announcement-bar-height, 0px));
     }
 
-  /* Fixed clone header */
- #header-clone{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    width:100%;
-    z-index:1001;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .3s ease;
+  /* Fixed clone header – floating on scroll */
+  #header-clone {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1001;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    border-radius: 0;
+    transition: opacity .3s ease, top .4s cubic-bezier(.4,0,.2,1), left .4s cubic-bezier(.4,0,.2,1), right .4s cubic-bezier(.4,0,.2,1), border-radius .4s cubic-bezier(.4,0,.2,1), box-shadow .4s ease;
   }
-  #header-clone.is-visible{
-    opacity:1;
-    pointer-events:auto;
+  #header-clone.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    top: 10px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06);
   }
 {%- endif -%}
 
